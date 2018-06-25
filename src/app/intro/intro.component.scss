@@ -1,0 +1,25 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    .intro-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    .tic-tac-image {
+        width: 100%;
+        .image {
+            width: 50%;
+            height: auto;
+        }
+    }
+    .play-button-container {
+        width: 100%;
+        .play-btn {
+            width: 100%;
+        }
+    }
+
+
+}
