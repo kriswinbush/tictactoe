@@ -1,7 +1,6 @@
 <div class="container">
 
   <div class="intro-container">
-    
       <mat-form-field>
         <mat-select [(value)]="gameEngine.numPlayers" placeholder="Number of player(s)">
           <mat-option *ngFor="let player of gameEngine.numOfPlayers" [value]="player.value">
