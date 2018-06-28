@@ -11,7 +11,6 @@
             }
         }
         .board-play-container {
-            border: 1px solid black;
             display: flex;
             .row-btn-container {
                 display: flex;
@@ -23,7 +22,6 @@
             }
 
             .board-matrix-container {
-                border: 1px solid red;
                 width: 100%;
                 .board-matrix {
                     display: flex;
