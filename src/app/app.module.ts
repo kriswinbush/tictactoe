@@ -13,15 +13,13 @@ import { MatCardModule } from '@angular/material/card';
 import { IntroComponent } from './intro/intro.component';
 import { PlayComponent } from './play/play.component';
 import { WinComponent } from './win/win.component';
-import { StartComponent } from './start/start.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IntroComponent,
     PlayComponent,
-    WinComponent,
-    StartComponent
+    WinComponent
   ],
   imports: [
     BrowserModule,

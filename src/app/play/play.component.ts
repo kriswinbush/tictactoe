@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GameEngineService } from "../game-engine.service";
 import { Router } from "@angular/router";
 @Component({
@@ -6,20 +6,25 @@ import { Router } from "@angular/router";
   templateUrl: './play.component.html',
   styleUrls: ['./play.component.scss']
 })
-export class PlayComponent implements OnInit {
+export class PlayComponent implements OnDestroy {
 
   constructor(private gameEngine: GameEngineService, private router:Router) { }
-
-  ngOnInit() {}
-
-  addRow() {
-    this.gameEngine.generateRow();
+  ngOnInit() {
+    this.gameEngine.gameInit();
   }
-  checkPlayersSquare(btn) {
-    // get player from game engine player turn var
-    if(this.gameEngine.evaluatePlay(btn)) {
-      this.router.navigate(['/win'])
-    }
 
+  ngOnDestroy() {
+    this.gameEngine.resetBoardValues();
   }
+
+  addRow = () => this.gameEngine.generateRow();
+  
+  removeRow = () => this.gameEngine.removeRow() ? this.router.navigate(['/win']) : null;
+   
+  addColumn = () => this.gameEngine.addColumn();
+  
+  removeColumn = () => this.gameEngine.removeColumn() ? this.router.navigate(['/win']) : null;
+   
+  checkPlayersSquare = btn => this.gameEngine.evaluatePlay(btn) ? this.router.navigate(['/win']) : null;
+ 
 }

@@ -1,0 +1,28 @@
+.win-container {
+    display: grid;
+    grid-template-columns: 25vw auto 25vw;
+    grid-template-rows: 80px auto 50px;
+    width: 100%;
+    height: calc(100vh - 84px);
+    .win-header {
+        grid-column-start: 1;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 2;
+    }
+    .win-image {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 3;
+    }
+    .win-footer {
+        grid-column-start: 1;
+        grid-column-end: 4;
+        grid-row-start: 3;
+        grid-row-end: 4;
+        .win-btn {
+            width: 100%;
+        }
+    }
+}

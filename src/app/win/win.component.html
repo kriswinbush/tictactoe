@@ -1,18 +1,12 @@
 <div class="win-container">
-  <mat-card class="example-card">
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>{{gameEngine.currentPlayer.name}}</mat-card-title>
-      <mat-card-subtitle>Is the Winner: {{gameEngine.currentPlayer.isWinner}}</mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image src="assets/tic_tac_toe.svg" alt="Tic Tac toe">
-    <mat-card-content>
-      <p>
-          Health goth meditation humblebrag, 3 wolf moon pickled hexagon polaroid taiyaki echo park jean shorts seitan. Shaman brooklyn tacos humblebrag art party blog occupy waistcoat intelligentsia schlitz whatever portland everyday carry.
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button (click)="resetGame()" mat-button>New Game?</button>
-    </mat-card-actions>
-  </mat-card>
+  <div class="win-header">
+    <h2>{{gameEngine.currentPlayer.name}}</h2>
+    <h3 *ngIf="gameEngine.currentPlayer.isWinner">Is the Winner</h3>
+  </div>
+  <div class="win-image">
+      <img mat-card-image src="assets/tic_tac_toe.svg" alt="Tic Tac toe">
+  </div>
+  <div class="win-footer">
+      <button mat-raised-button color="secondary" class="win-btn" (click)="resetGame()" mat-button>New Game</button>
+  </div>
 </div>

@@ -15,6 +15,7 @@ export class WinComponent implements OnInit {
 
   }
   resetGame() {
+    this.gameEngine.resetBoardValues();
     this.router.navigate(['/']);
   }
 }

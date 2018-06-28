@@ -14,6 +14,5 @@ export class IntroComponent implements OnInit {
 
   startGame() {
     this.router.navigate(['/play']);
-    this.gameEngine.gameInit();
   }
 }

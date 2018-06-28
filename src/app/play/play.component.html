@@ -1,13 +1,25 @@
 <div class="play-container">
-  <div>
-    <h1>Your Turn: {{gameEngine.currentPlayer.name}}</h1>
-  </div>
-  <div class="btn-container">
-    <button class="full-width" mat-raised-button color="secondary" (click)="addRow()">add a new row</button>
-  </div>
+  <h1>Your Turn: {{gameEngine.currentPlayer.name}}</h1>
   <div class="board-container">
-    <div class="board-row" *ngFor="let row of gameEngine.board">
-      <button [ngClass]="el.color" (click)="checkPlayersSquare(el)" class="board-btn" color="primary" mat-raised-button *ngFor="let el of row">{{el.name}}</button>
+
+    <div class="column-btn-container">
+      <button class="full-width" mat-raised-button color="secondary" (click)="addColumn()">+ Column</button>
+      <button class="full-width" mat-raised-button color="secondary" (click)="removeColumn()">- Column</button>
     </div>
+
+    <div class="board-play-container">
+
+      <div class="row-btn-container">
+          <button class="row-btn" mat-raised-button color="secondary" (click)="addRow()">+ Row</button>
+          <button class="row-btn" mat-raised-button color="secondary" (click)="removeRow()">- Row</button>    
+      </div>
+      <div class="board-matrix-container">
+        <div class="board-matrix" *ngFor="let row of gameEngine.board">
+          <button [ngClass]="el.color" (click)="checkPlayersSquare(el)" class="board-btn" color="primary" mat-raised-button *ngFor="let el of row">{{el.name}}</button>
+        </div>
+      </div>
+    </div>
+
   </div>
+
 </div>
