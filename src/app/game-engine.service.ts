@@ -25,8 +25,6 @@ export class GameEngineService {
     {value: 5, viewValue: 'Five'}
   ];
 
-  foundWinner = false;
-
   currentPlayer = {
     name:'', 
     isWinner: false, 
@@ -51,7 +49,6 @@ export class GameEngineService {
     this.numPlayers = 1;
     this.numRows = 5;
     this.numColumns = 4;
-    this.foundWinner = false;
   }
   
   nextPlayer() {
@@ -63,14 +60,14 @@ export class GameEngineService {
   generateRow() {
     let row = [];
     for (let i = 0; i < this.numColumns; i++) {
-      row.push({name:"open", owner:'', checked:false, color:''})
+      row.push({name:"open", checked:false, color:''})
     }
     this.board.push(row)
   }
 
   addColumn() {
     this.board.map(row => {
-      row.push({name:"open", owner:'', checked:false, color:''})
+      row.push({name:"open", checked:false, color:''})
       return row;
     })
     this.numColumns = this.board[0].length;
@@ -78,26 +75,30 @@ export class GameEngineService {
   removeColumn() {
     this.board.forEach(row => row.pop());
     this.numColumns = this.board[0].length;
-    for(let i = 0; i < this.players.length; i++) {
-      if( this.checkMatrixForMatchs(this.players[i]) ) {
-        //if true set current player to winner for results screen
-        this.currentPlayer = this.players[i];
-        break;
-      }
-    }
-    return this.foundWinner;
+    var rColWin = this.players.map(player => this.checkMatrixForMatchs(player));
+    return Promise.all([...rColWin])
+      .then(res => { 
+        return res.reduce((winning,el, idx)=>{
+          el["win"] == true ? winning = el : null;  
+          return winning;
+        },{});
+    })
   }
+
   removeRow() {
     this.board.pop();
-    for(let i = 0; i < this.players.length; i++) {
-      if( this.checkMatrixForMatchs(this.players[i]) ) {
-        //if true set current player to winner for results screen
-        this.currentPlayer = this.players[i];
-        break;
-      }
-    }
-    return this.foundWinner;
+    var rRowWin = this.players.map(player => {
+      return this.checkMatrixForMatchs(player);
+    })
+    return Promise.all([...rRowWin])
+      .then(res => { 
+        return res.reduce((winning,el, idx)=>{
+        el["win"] == true ? winning = el : null;  
+        return winning;
+      },{});
+    })
   }
+
   generateBoard() {
     for(let i= 0; i < this.numRows; i++) {
       this.generateRow();
@@ -113,87 +114,106 @@ export class GameEngineService {
 
   evaluatePlay(btn){
     const {name, color} = this.currentPlayer;
-    btn.owner = name;
-    btn.color = color;
-    btn.checked = true;
-    btn.name = name;
+    Object.assign(btn,{name, color, checked: true});
+    return this.checkPlayerWon()
+    .then(res => {
+      var winner = res.reduce((winning,el, idx)=>{
+        el["win"] == true ? winning = el : null;  
+        return winning;
+      },{});
 
-    if(this.checkPlayerWon()) {
-      this.foundWinner = true;
-    } else { 
-      this.nextPlayer();
-    };
-    return this.foundWinner;
-    
+      winner.hasOwnProperty("win") ? null : this.nextPlayer();
+
+      return winner;
+    })
   }
 
   checkPlayerWon() {
     return this.checkMatrixForMatchs(this.currentPlayer);
   }
 
-  checkMatrixForMatchs(player) {
+  async checkMatrixForMatchs(player) {
     let playerMatrix = this.board.map(boardRowArray => {
-      return boardRowArray.map(e => e.owner.indexOf(player.name))
-    })
-    //all values in row are the same
-    this.rowCheck(player, playerMatrix);
-    //all values in a column are the same
-    this.columnCheck(player, playerMatrix);
-    //Four in a square wins the game
-    this.squareCheck(player, playerMatrix);
-    
-    return this.foundWinner;
-  }
+      return boardRowArray.map(e => e.name.indexOf(player.name))
+    });
+
+    let rCheck = this.rowCheck(player, playerMatrix);
+    let cCheck = this.columnCheck(player, playerMatrix);
+    let sCheck = this.squareCheck(player, playerMatrix);
+
+    let result = await Promise.all([rCheck,cCheck,sCheck]);
+
+    return result;
+  } 
 
   rowCheck(player, matrix) {
+    return new Promise((resolve, reject) => {
+      var rowWin = false;
+      for(var i =0; i < matrix.length; i++) {
+        //first test if all values in this row are the same
+        var rowCheck = matrix[i].every(elVal => elVal === matrix[i][0] && elVal !== -1);
+       if(rowCheck) {
+          player.isWinner = true;
+          rowWin = true;
+         break;
+       }
+      };
+      resolve({win: rowWin, type:"row", index: i});
+    })
     //all values in row are the same
-    for(let i =0; i < matrix.length; i++) {
-      //first test if all values in this row are the same
-      var rowCheck = matrix[i].every(elVal => elVal === matrix[i][0] && elVal !== -1);
-     if(rowCheck) {
-        player.isWinner = true;
-        this.foundWinner = true;
-       break;
-     }
-    };
   }
 
   columnCheck(player, matrix) {
-    var playerHasColumnWin = [];
-    //all values in a column are the same
-    matrix.forEach((rowEl) => {
-      if( rowEl.indexOf(0) !== -1) {
-        playerHasColumnWin.push(rowEl.indexOf(0))
-      }
-      var columnWin = playerHasColumnWin.every(elVal => elVal === playerHasColumnWin[0])
-      if(columnWin && playerHasColumnWin.length === matrix.length) {
-        player.isWinner = true;
-        this.foundWinner = true;
-      }
-    });
+    //debugger;
+    return new Promise((resolve, reject) => {
+      var colWin = false;
+      var playerHasColumnWin = [];
+      //all values in a column are the same
+      matrix.forEach((rowEl, idx) => {
+        if( rowEl.indexOf(0) !== -1) {
+          //push object with row index
+          playerHasColumnWin.push({el:rowEl.indexOf(0), index: idx})
+        }
+        if(playerHasColumnWin.length > 0) {
+          var columnWin = playerHasColumnWin.every(elVal => elVal.el === playerHasColumnWin[0]['el'])
+          if(columnWin && playerHasColumnWin.length === matrix.length) {
+            player.isWinner = true;
+            colWin = true;
+          }
+        }
+        
+      });
+      resolve({win: colWin, type:"column", index: playerHasColumnWin.length > 0 ? playerHasColumnWin[0]['el'] : null})
+    })
+    
   }
 
   squareCheck(player, matrix) {
     //Four in a square wins the game
-    matrix.forEach((rowEl, idx) => {
-      var i0 = rowEl.indexOf(0);
-      if(i0 != -1) {
-        var i1 = rowEl[i0 + 1]
-        if(i1 != -1){
-          var nextIdx = idx + 1;
-          var prevIdx = idx - 1;
-          if(nextIdx >= matrix.length || prevIdx == -1) {
-            console.log('no rows before of after this row')
-          } else {
-            if( (matrix[nextIdx][i0] == 0 && matrix[nextIdx][i0 + 1] == 0) || (matrix[prevIdx][i0] == 0 && matrix[prevIdx][i0 + 1] == 0)) {
-              console.log("winner");
-              player.isWinner = true;
-              this.foundWinner = true;
+    return new Promise((resolve, reject) => {
+      var sqWin = false;
+      matrix.forEach((rowEl, idx) => {
+        var i0 = rowEl.indexOf(0);
+        if(i0 != -1) {
+          var i1 = rowEl[i0 + 1]
+          if(i1 != -1){
+            var nextIdx = idx + 1;
+            var prevIdx = idx - 1;
+            if(nextIdx >= matrix.length || prevIdx == -1) {
+              console.log('no rows before of after this row')
+            } else {
+              if( (matrix[nextIdx][i0] == 0 && matrix[nextIdx][i0 + 1] == 0) || (matrix[prevIdx][i0] == 0 && matrix[prevIdx][i0 + 1] == 0)) {
+                console.log("winner");
+                player.isWinner = true;
+                sqWin = true;
+              }
             }
           }
         }
-      }
-    });
+      });
+      resolve({win: sqWin, type: "square"});
+    })
+    
   }
 
 }

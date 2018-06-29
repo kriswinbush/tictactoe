@@ -19,12 +19,30 @@ export class PlayComponent implements OnDestroy {
 
   addRow = () => this.gameEngine.generateRow();
   
-  removeRow = () => this.gameEngine.removeRow() ? this.router.navigate(['/win']) : null;
+  removeRow = () =>{
+    this.gameEngine.removeRow()
+      .then(res => {
+        console.log(res);
+        res.hasOwnProperty('win') ? this.router.navigate(['/win']) : null;
+      });
+  } 
    
   addColumn = () => this.gameEngine.addColumn();
   
-  removeColumn = () => this.gameEngine.removeColumn() ? this.router.navigate(['/win']) : null;
+  removeColumn = () =>{
+    this.gameEngine.removeColumn()
+      .then(res => {
+        console.log(res);
+        res.hasOwnProperty('win') ? this.router.navigate(['/win']) : null;
+      });
+  }
    
-  checkPlayersSquare = btn => this.gameEngine.evaluatePlay(btn) ? this.router.navigate(['/win']) : null;
+  checkPlayersSquare = btn =>{
+    this.gameEngine.evaluatePlay(btn)
+      .then(res => {
+        console.log(res);
+        res.hasOwnProperty('win') ? this.router.navigate(['/win']) : null;
+      });
+  }
  
 }
