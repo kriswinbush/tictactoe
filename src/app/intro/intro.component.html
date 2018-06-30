@@ -2,7 +2,7 @@
 
   <div class="intro-container">
       <mat-form-field>
-        <mat-select [(value)]="gameEngine.numPlayers" placeholder="Number of player(s)">
+        <mat-select [(value)]="gameEngine.numPlayers" placeholder="Number of player(s)" #r>
           <mat-option *ngFor="let player of gameEngine.numOfPlayers" [value]="player.value">
             {{ player.viewValue }}
           </mat-option>
@@ -30,6 +30,6 @@
     <img class="image" src="assets/tic_tac_toe.svg" />
   </div>
   <div class="play-button-container">
-    <button (click)="startGame()" class="play-btn" mat-raised-button color="primary">Play Tic Tac Toe</button>
+    <button disabled="{{gameEngine.numPlayers == 1 ? true : false}}" (click)="startGame()" class="play-btn" mat-raised-button color="primary">Play Tic Tac Toe</button>
   </div>
 </div>

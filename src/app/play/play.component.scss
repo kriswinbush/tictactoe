@@ -1,4 +1,11 @@
 .play-container {
+    .play-header {
+        display: flex;
+        flex-direction: column;
+        span {
+            flex: 1;
+        }
+    }
     .board-container {
         display: flex;
         flex-direction: column;
@@ -28,6 +35,7 @@
                     flex-direction: row;
                     .board-btn {
                         width: 100%;
+                        margin: 2px;
                     }
                 }
                 

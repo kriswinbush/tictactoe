@@ -12,7 +12,7 @@ export class PlayComponent implements OnDestroy {
   ngOnInit() {
     this.gameEngine.gameInit();
   }
-
+  
   ngOnDestroy() {
     this.gameEngine.resetBoardValues();
   }
@@ -38,10 +38,10 @@ export class PlayComponent implements OnDestroy {
   }
    
   checkPlayersSquare = btn =>{
-    this.gameEngine.evaluatePlay(btn)
+    this.gameEngine.evaluatePlay(btn) 
       .then(res => {
         console.log(res);
-        res.hasOwnProperty('win') ? this.router.navigate(['/win']) : null;
+        res.hasOwnProperty('win') ? setTimeout(() => { this.router.navigate(['/win']) }, 2000)  : null;
       });
   }
  

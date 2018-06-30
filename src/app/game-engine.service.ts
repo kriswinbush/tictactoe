@@ -93,8 +93,8 @@ export class GameEngineService {
     return Promise.all([...rRowWin])
       .then(res => { 
         return res.reduce((winning,el, idx)=>{
-        el["win"] == true ? winning = el : null;  
-        return winning;
+          el["win"] == true ? winning = el : null;  
+          return winning;
       },{});
     })
   }
@@ -113,19 +113,23 @@ export class GameEngineService {
   }
 
   evaluatePlay(btn){
-    const {name, color} = this.currentPlayer;
-    Object.assign(btn,{name, color, checked: true});
-    return this.checkPlayerWon()
-    .then(res => {
-      var winner = res.reduce((winning,el, idx)=>{
-        el["win"] == true ? winning = el : null;  
-        return winning;
-      },{});
+    if(btn.checked == false) {
+      const {name, color} = this.currentPlayer;
+      Object.assign(btn,{name, color, checked: true});
+      return this.checkPlayerWon()
+      .then(res => {
+        var winner = res.reduce((winning,el, idx)=>{
+          el["win"] == true ? winning = el : null;  
+          return winning;
+        },{});
 
-      winner.hasOwnProperty("win") ? null : this.nextPlayer();
-
-      return winner;
-    })
+        winner.hasOwnProperty("win") ? null : this.nextPlayer();
+        
+        return winner;
+      })
+    } else {
+      return Promise.resolve({})
+    }
   }
 
   checkPlayerWon() {

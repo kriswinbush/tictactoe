@@ -13,13 +13,15 @@ import { MatCardModule } from '@angular/material/card';
 import { IntroComponent } from './intro/intro.component';
 import { PlayComponent } from './play/play.component';
 import { WinComponent } from './win/win.component';
+import { TictactitleComponent } from './tictactitle/tictactitle.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IntroComponent,
     PlayComponent,
-    WinComponent
+    WinComponent,
+    TictactitleComponent
   ],
   imports: [
     BrowserModule,
