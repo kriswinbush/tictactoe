@@ -1,10 +1,17 @@
 import { Injectable } from '@angular/core';
-
+import { LocaldbService } from "./localdb.service";
+interface IPlayer {
+  name: string 
+  isWinner: boolean
+  checkedMatrix: Array<number> 
+  color: string
+  wins: number
+}
 @Injectable({
   providedIn: 'root'
 })
 export class GameEngineService {
-  constructor() {}
+  constructor(private lDb:LocaldbService) {}
   numOfPlayers = [
     {value: 1, viewValue: 'One'},
     {value: 2, viewValue: 'Two'},
@@ -25,19 +32,14 @@ export class GameEngineService {
     {value: 5, viewValue: 'Five'}
   ];
 
-  currentPlayer = {
-    name:'', 
-    isWinner: false, 
-    checkedMatrix:[], 
-    color:""
-  };
+  currentPlayer: IPlayer;
 
-  playerMarkers = ['color1', 'color2', 'color3'];
-  numRows = 5;
-  numColumns = 4;
-  numPlayers = 1;
-  players = [];
-  board = [];
+  playerMarkers: Array<string> = ['color1', 'color2', 'color3'];
+  numRows: number = 5;
+  numColumns: number = 4;
+  numPlayers: number = 1;
+  players: Array<IPlayer> = [];
+  board: Array<any> = [];
 
   gameInit() {
     this.generateBoard();
@@ -105,10 +107,18 @@ export class GameEngineService {
     }
   }
 
-  addPlayers() {
+  async addPlayers() {
     for(let i = 0; i < this.numPlayers; i++) {
-      this.players.push({name:`Player: ${i}`, isWinner: false, checkedMatrix:[], color:this.playerMarkers[i]})
-    }
+      let initPlayer:IPlayer = Object.assign({},{name:`Player: ${i}`, isWinner: false, checkedMatrix:[], color:this.playerMarkers[i], wins: 0});
+      let getPlayer:IPlayer = await this.lDb.getItem(initPlayer);
+      
+      if(getPlayer !== undefined) {
+        this.players.push(getPlayer)
+      } else {
+        let createPlayer:IPlayer = await this.lDb.addItem(initPlayer);
+        this.players.push(createPlayer);
+      };
+    };
     this.currentPlayer = this.players[0];
   }
 
@@ -118,7 +128,7 @@ export class GameEngineService {
       Object.assign(btn,{name, color, checked: true});
       return this.checkPlayerWon()
       .then(res => {
-        var winner = res.reduce((winning,el, idx)=>{
+        var winner = res.reduce((winning, el, idx)=>{
           el["win"] == true ? winning = el : null;  
           return winning;
         },{});

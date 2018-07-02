@@ -14,6 +14,8 @@ import { IntroComponent } from './intro/intro.component';
 import { PlayComponent } from './play/play.component';
 import { WinComponent } from './win/win.component';
 import { TictactitleComponent } from './tictactitle/tictactitle.component';
+import { ChartDirective } from './chart.directive';
+import { WINDOW_PROVIDERS } from "./window.service";
 
 @NgModule({
   declarations: [
@@ -21,7 +23,8 @@ import { TictactitleComponent } from './tictactitle/tictactitle.component';
     IntroComponent,
     PlayComponent,
     WinComponent,
-    TictactitleComponent
+    TictactitleComponent,
+    ChartDirective
   ],
   imports: [
     BrowserModule,
@@ -32,7 +35,7 @@ import { TictactitleComponent } from './tictactitle/tictactitle.component';
     MatSelectModule,
     MatCardModule 
   ],
-  providers: [],
+  providers: [WINDOW_PROVIDERS],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

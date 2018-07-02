@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GameEngineService } from "../game-engine.service";
 import { Router } from "@angular/router";
+import { LocaldbService } from "../localdb.service";
+
 @Component({
   selector: 'app-play',
   templateUrl: './play.component.html',
@@ -8,7 +10,7 @@ import { Router } from "@angular/router";
 })
 export class PlayComponent implements OnDestroy {
 
-  constructor(private gameEngine: GameEngineService, private router:Router) { }
+  constructor(private lDb: LocaldbService, private gameEngine: GameEngineService, private router:Router) { }
   ngOnInit() {
     this.gameEngine.gameInit();
   }
@@ -22,7 +24,6 @@ export class PlayComponent implements OnDestroy {
   removeRow = () =>{
     this.gameEngine.removeRow()
       .then(res => {
-        console.log(res);
         res.hasOwnProperty('win') ? this.router.navigate(['/win']) : null;
       });
   } 
@@ -32,7 +33,6 @@ export class PlayComponent implements OnDestroy {
   removeColumn = () =>{
     this.gameEngine.removeColumn()
       .then(res => {
-        console.log(res);
         res.hasOwnProperty('win') ? this.router.navigate(['/win']) : null;
       });
   }
@@ -40,9 +40,16 @@ export class PlayComponent implements OnDestroy {
   checkPlayersSquare = btn =>{
     this.gameEngine.evaluatePlay(btn) 
       .then(res => {
-        console.log(res);
-        res.hasOwnProperty('win') ? setTimeout(() => { this.router.navigate(['/win']) }, 2000)  : null;
+        let player = this.gameEngine.currentPlayer;
+        if(player.isWinner === true && res.hasOwnProperty('win')) {
+          player.wins = player.wins + 1;
+          this.lDb.addItem(player)
+            .then(player => {
+              setTimeout(() => { this.router.navigate(['/win']) }, 2000)  
+            });
+        } else {
+          return null;
+        }
       });
   }
- 
 }
